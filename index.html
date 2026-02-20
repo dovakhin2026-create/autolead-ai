@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoLead.ai - AI Chatbot That Qualifies Your Leads 24/7</title>
+    <meta name="description" content="Automate lead qualification with AI. For contractors and small businesses. Starting at $99/month.">
+    <script src="chatbot.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Hero Section - Dark/Modern */
+        .hero {
+            background: #0a0a0a;
+            color: white;
+            padding: 120px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 135, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 122, 255, 0.1) 0%, transparent 50%);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+            color: #b0b0b0;
+            line-height: 1.8;
+        }
+        
+        .cta-button {
+            background: #00ff87;
+            color: #0a0a0a;
+            padding: 18px 48px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 255, 135, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0, 255, 135, 0.4);
+        }
+        
+        /* Stats Bar */
+        .stats {
+            background: #f8f8f8;
+            padding: 40px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0a0a0a;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* Features Section - Clean */
+        .features {
+            padding: 100px 20px;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 60px;
+            color: #0a0a0a;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            padding: 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: #00ff87;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        /* How it Works */
+        .how-it-works {
+            padding: 100px 20px;
+            background: #0a0a0a;
+            color: white;
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        
+        .step {
+            text-align: center;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #00ff87;
+            color: #0a0a0a;
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .step h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        
+        .step p {
+            color: #b0b0b0;
+        }
+        
+        /* Pricing Section - Simple */
+        .pricing {
+            padding: 100px 20px;
+            background: white;
+        }
+        
+        .price-card {
+            max-width: 500px;
+            margin: 60px auto 0;
+            padding: 60px 50px;
+            border: 2px solid #0a0a0a;
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        .price-amount {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #0a0a0a;
+            margin-bottom: 8px;
+        }
+        
+        .price-period {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        
+        .features-list {
+            text-align: left;
+            margin: 40px 0;
+        }
+        
+        .features-list li {
+            padding: 12px 0;
+            list-style: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .features-list li:before {
+            content: "✓";
+            color: #00ff87;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 12px;
+        }
+        
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            color: #b0b0b0;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        footer a {
+            color: #00ff87;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your Leads Qualify Themselves While You Sleep</h1>
+            <p>Intelligent AI chatbot that responds to your prospects 24/7, collects their precise needs, and sends you only the hot leads.</p>
+            <button class="cta-button" onclick="alert('Sign up coming soon!')">Start Free Trial</button>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Always Available</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">3x</div>
+                    <div class="stat-label">More Qualified Leads</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">$99</div>
+                    <div class="stat-label">Per month, all-inclusive</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Everything You Need</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Natural Conversations</h3>
+                    <p>Your chatbot understands context and responds like a real sales rep. No robotic answers.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Smart Qualification</h3>
+                    <p>Asks the right questions to identify budget, timing, and needs. You receive actionable leads.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Express Setup</h3>
+                    <p>Live in 24 hours. Simple configuration, no code required. We handle everything.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Sign Up</h3>
+                    <p>5 minutes to create your account and configure your chatbot.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Integration</h3>
+                    <p>Add the widget to your website. Simple copy-paste.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Qualified Leads</h3>
+                    <p>Receive notifications with contact details and needs of each prospect.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <h2 class="section-title">One Price, All-Inclusive</h2>
+            <div class="price-card">
+                <div class="price-amount">$99</div>
+                <div class="price-period">per month • no commitment</div>
+                
+                <ul class="features-list">
+                    <li>Custom AI chatbot</li>
+                    <li>Unlimited conversations</li>
+                    <li>Instant notifications</li>
+                    <li>Analytics dashboard</li>
+                    <li>Technical support</li>
+                    <li>Updates included</li>
+                </ul>
+                
+                <button class="cta-button">Start Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AutoLead.ai</p>
+            <p>Email: <a href="mailto:dovakhin2026@gmail.com">dovakhin2026@gmail.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>
