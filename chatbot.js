@@ -348,20 +348,36 @@ class AutoLeadChatbot {
     }
 
     async sendLead() {
-        this.addMessage("✅ Thank you! Your request has been submitted. We'll contact you within 24 hours to discuss your project!");
+        this.addMessage("⏳ Sending your request...");
         
-        // Send to email (would need backend in production)
-        console.log('Lead captured:', this.userData);
-        
-        // In production, you'd send to your backend:
-        // await fetch('/api/leads', {
-        //     method: 'POST',
-        //     body: JSON.stringify(this.userData)
-        // });
-        
-        setTimeout(() => {
-            this.addMessage("In the meantime, feel free to explore our site to learn more about AutoLead.ai! 🚀");
-        }, 2000);
+        try {
+            // Send to Netlify Function
+            const response = await fetch('/.netlify/functions/submit-lead', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: this.userData.name,
+                    email: this.userData.email,
+                    phone: this.userData.phone,
+                    company: '',
+                    message: `Project Type: ${this.userData.projectType}\nBudget: ${this.userData.budget}\nTiming: ${this.userData.timing}`
+                })
+            });
+            
+            if (response.ok) {
+                this.addMessage("✅ Thank you! Your request has been submitted. We'll contact you within 24 hours to discuss your project!");
+                setTimeout(() => {
+                    this.addMessage("In the meantime, feel free to explore our site to learn more about AutoLead.ai! 🚀");
+                }, 2000);
+            } else {
+                throw new Error('Failed to submit');
+            }
+        } catch (error) {
+            console.error('Error sending lead:', error);
+            this.addMessage("⚠️ There was an issue submitting your request. Please try again or email us directly at contact@autolead-ai.com");
+        }
     }
 }
 
