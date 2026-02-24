@@ -376,7 +376,7 @@ class AutoLeadChatbot {
             }
         } catch (error) {
             console.error('Error sending lead:', error);
-            this.addMessage("⚠️ There was an issue submitting your request. Please try again or email us directly at contact@autolead-ai.com");
+            this.addMessage("⚠️ There was an issue submitting your request. Please try again or email us directly at dovakhin2026@gmail.com");
         }
     }
 }
