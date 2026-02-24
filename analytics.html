@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoLead.ai - Business Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+        
+        .header { background: #161b22; padding: 20px 30px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 24px; color: #58a6ff; }
+        .header .date { color: #8b949e; font-size: 14px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 30px; }
+        .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; }
+        .stat-card .label { color: #8b949e; font-size: 14px; margin-bottom: 10px; }
+        .stat-card .value { font-size: 36px; font-weight: bold; }
+        .stat-card .change { font-size: 14px; margin-top: 8px; }
+        .stat-card .change.positive { color: #3fb950; }
+        .stat-card .change.negative { color: #f85149; }
+        
+        .stat-card.visitors .value { color: #58a6ff; }
+        .stat-card.leads .value { color: #a371f7; }
+        .stat-card.emails .value { color: #3fb950; }
+        .stat-card.revenue .value { color: #f0883e; }
+        
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 0 30px 30px; }
+        .chart-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; }
+        .chart-card h3 { margin-bottom: 20px; color: #e6edf3; }
+        
+        .table-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; margin: 0 30px 30px; }
+        .table-card h3 { margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; color: #8b949e; border-bottom: 1px solid #30363d; font-weight: 500; }
+        td { padding: 12px; border-bottom: 1px solid #21262d; }
+        tr:last-child td { border-bottom: none; }
+        .status { padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+        .status.sent { background: rgba(63, 185, 80, 0.2); color: #3fb950; }
+        .status.delivered { background: rgba(88, 166, 255, 0.2); color: #58a6ff; }
+        .status.opened { background: rgba(163, 113, 247, 0.2); color: #a371f7; }
+        .status.replied { background: rgba(240, 136, 62, 0.2); color: #f0883e; }
+        
+        .refresh-btn { background: #238636; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .refresh-btn:hover { background: #2ea043; }
+        
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 AutoLead.ai - Business Dashboard</h1>
+        <div>
+            <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
+            <span class="date" id="lastUpdate">Last update: --</span>
+        </div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card visitors">
+            <div class="label">👁️ Visitors (30d)</div>
+            <div class="value" id="visitors">--</div>
+            <div class="change" id="visitorsChange">-</div>
+        </div>
+        <div class="stat-card leads">
+            <div class="label">🎯 Leads Captured</div>
+            <div class="value" id="leads">--</div>
+            <div class="change" id="leadsChange">-</div>
+        </div>
+        <div class="stat-card emails">
+            <div class="label">📧 Emails Sent</div>
+            <div class="value" id="emailsSent">29</div>
+            <div class="change positive">+29 today</div>
+        </div>
+        <div class="stat-card revenue">
+            <div class="label">💰 Pipeline Value</div>
+            <div class="value" id="revenue">€0</div>
+            <div class="change" id="revenueChange">Target: €990/mo</div>
+        </div>
+    </div>
+    
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3>📈 Traffic & Leads Trend</h3>
+            <canvas id="trafficChart" height="200"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>📧 Email Performance</h3>
+            <canvas id="emailChart" height="200"></canvas>
+        </div>
+    </div>
+    
+    <div class="table-card">
+        <h3>📋 Recent Leads</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="leadsTable">
+                <tr><td colspan="5" style="text-align:center;color:#8b949e;">Loading leads...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="table-card">
+        <h3>📤 Outreach Status</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Batch</th>
+                    <th>Region</th>
+                    <th>Sent</th>
+                    <th>Delivered</th>
+                    <th>Opened</th>
+                    <th>Replied</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Batch 001</td>
+                    <td>Luxembourg</td>
+                    <td>10</td>
+                    <td>7</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Batch 002</td>
+                    <td>Europe</td>
+                    <td>15</td>
+                    <td>15</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Batch 003</td>
+                    <td>Worldwide</td>
+                    <td>4</td>
+                    <td>4</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        // Sample data - Replace with real API calls
+        let leads = [
+            { name: 'Test Lead', email: 'test@test.com', service: 'Electrician', date: '2026-02-24', status: 'new' }
+        ];
+        
+        function updateDashboard() {
+            document.getElementById('visitors').textContent = '127';
+            document.getElementById('leads').textContent = '1';
+            document.getElementById('lastUpdate').textContent = 'Last update: ' + new Date().toLocaleTimeString();
+            
+            // Update leads table
+            const tbody = document.getElementById('leadsTable');
+            tbody.innerHTML = leads.map(lead => `
+                <tr>
+                    <td>${lead.name}</td>
+                    <td>${lead.email}</td>
+                    <td>${lead.service}</td>
+                    <td>${lead.date}</td>
+                    <td><span class="status ${lead.status}">${lead.status}</span></td>
+                </tr>
+            `).join('');
+            
+            if(leads.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#8b949e;">No leads yet</td></tr>';
+            }
+        }
+        
+        function refreshData() {
+            updateDashboard();
+        }
+        
+        // Initialize
+        updateDashboard();
+        
+        // Traffic Chart
+        new Chart(document.getElementById('trafficChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Visitors',
+                    data: [0, 0, 0, 0, 0, 127],
+                    borderColor: '#58a6ff',
+                    backgroundColor: 'rgba(88, 166, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Leads',
+                    data: [0, 0, 0, 0, 0, 1],
+                    borderColor: '#a371f7',
+                    backgroundColor: 'rgba(163, 113, 247, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: { legend: { labels: { color: '#e6edf3' } } },
+                scales: {
+                    x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+                    y: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } }
+                }
+            }
+        });
+        
+        // Email Chart
+        new Chart(document.getElementById('emailChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Delivered', 'Bounced', 'Blocked'],
+                datasets: [{
+                    data: [26, 3, 10],
+                    backgroundColor: ['#3fb950', '#f85149', '#f0883e']
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { color: '#e6edf3' } } }
+            }
+        });
+    </script>
+</body>
+</html>
